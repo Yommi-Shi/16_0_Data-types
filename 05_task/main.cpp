@@ -16,11 +16,6 @@ int main() {
     std::cout << "Smart home" << std::endl;
 
     int switches_state = 0;
-
-    bool heating_water_pipe = false;
-    bool heating = false;
-    bool conditioner = false;
-    bool is_movement = false;
     int indoorLightColorTemp = 5000;
 
     for (int i = 0; i < 2; i++) {
@@ -40,61 +35,53 @@ int main() {
             buffer_stream << temp_in << temp_out << movement << lights;
 
             if (temp_out < 0) {
-                switches_state |= WATER_PIPE_HEATING;
-                if (!heating_water_pipe) {
-                    heating_water_pipe = true;
+                if (!(switches_state & WATER_PIPE_HEATING)) {
                     std::cout << "WATER PIPE HEATING ON!" << std::endl;
                 }
+                switches_state |= WATER_PIPE_HEATING;
             } else if (temp_out > 5) {
-                switches_state &= ~WATER_PIPE_HEATING;
-                if (heating_water_pipe) {
-                    heating_water_pipe = false;
+                if (switches_state & WATER_PIPE_HEATING) {
                     std::cout << "WATER PIPE HEATING OFF!" << std::endl;
                 }
+                switches_state &= ~WATER_PIPE_HEATING;
             }
 
             bool movement_outside = (movement == "yes");
 
             if ((j > 16 || j < 5) && movement_outside) {
-                switches_state |= LIGHTS_OUTSIDE;
-                if (!is_movement) {
-                    is_movement = true;
+                if (!(switches_state & LIGHTS_OUTSIDE)) {
                     std::cout << "LIGHTS OUTSIDE ON!" << std::endl;
                 }
+                switches_state |= LIGHTS_OUTSIDE;
             } else {
-                switches_state &= ~LIGHTS_OUTSIDE;
-                if (is_movement) {
-                    is_movement = false;
+                if (switches_state & LIGHTS_OUTSIDE) {
                     std::cout << "LIGHTS OUTSIDE OFF!" << std::endl;
                 }
+                switches_state &= ~LIGHTS_OUTSIDE;
             }
 
             if (temp_in < 22) {
-                switches_state |= HEATERS;
-                if (!heating) {
-                    heating = true;
+                if (!(switches_state & HEATERS)) {
                     std::cout << "HEATERS ON!" << std::endl;
                 }
+                switches_state |= HEATERS;
             } else if (temp_in >= 25) {
-                switches_state &= ~HEATERS;
-                if (heating) {
-                    heating = false;
+                if (switches_state & HEATERS) {
                     std::cout << "HEATERS OFF!" << std::endl;
                 }
+                switches_state &= ~HEATERS;
             }
 
             if (temp_in >= 30) {
-                switches_state |= CONDITIONER;
-                if (!conditioner) {
-                    conditioner = true;
+                if (!(switches_state & CONDITIONER)) {
                     std::cout << "CONDITIONER ON!" << std::endl;
                 }
+                switches_state |= CONDITIONER;
             } else if (temp_in <= 25) {
-                switches_state &= ~CONDITIONER;
-                if (conditioner) {
-                    conditioner = false;
+                if (switches_state & CONDITIONER) {
                     std::cout << "CONDITIONER OFF!" << std::endl;
                 }
+                switches_state &= ~CONDITIONER;
             }
 
             bool light_input = (lights == "on");
