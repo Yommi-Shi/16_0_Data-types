@@ -5,7 +5,7 @@ int main() {
     std::cout << "Speedometer" << std::endl;
 
     float speed_value = 0.0;
-    char speed_str[5];
+    char speed_str[7];
     float speed_delta;
 
     do {
